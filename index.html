@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>File List</title>
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    </head>
+    <body>
+        <ul id="fileList" style="list-style-type:none; margin:0; padding:0;"></ul>
+        <script src="./azure-storage.common.min.js"></script> 
+        <script src="./azure-storage.blob.min.js"></script>
+        <script>
+            var listNode = document.getElementById('fileList');
+            var blobUri = window.location.origin;
+            var blobContainer = window.location.pathname.split("/",2)[1];
+            var blobService = AzureStorage.createBlobServiceAnonymous(blobUri);
+            blobService.listBlobsSegmented(blobContainer, null, function (error, results) {
+                if(error) {
+                    Alert(error);
+                } else {
+                    for( var i=0, blob; blob = results.entries[i]; i++) {
+                        if(!blob.name.endsWith("min.js") && blob.name != "index.html") {
+                            //Do something with object
+                            var resultNode = document.createElement("li");
+                            resultNode.style.cssText = 'list-decoration:none;';
+                            var textNode = document.createElement("a");
+                            textNode.setAttribute("href", blobUri+"/"+blobContainer+"/"+blob.name);
+                            textNode.text = blob.name;
+                            resultNode.appendChild(textNode);
+                            listNode.appendChild(resultNode);
+                        }
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
