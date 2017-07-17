@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
     </head>
     <body>
-        <ul id="fileList" style="list-style-type:none; margin:0; padding:0;"></ul>
+        <ul id="fileList" style="list-style-type:none; margin:0; padding:0; font-family: monospace;"></ul>
         <script src="./azure-storage.common.min.js"></script> 
         <script src="./azure-storage.blob.min.js"></script>
         <script>
@@ -19,6 +19,9 @@
                 if(error) {
                     Alert(error);
                 } else {
+                    results.entries.sort(function(a,b) { 
+                        return new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime() 
+                    });
                     for( var i=0, blob; blob = results.entries[i]; i++) {
                         if(!blob.name.endsWith("min.js") && blob.name != "index.html") {
                             //Do something with object
@@ -26,7 +29,7 @@
                             resultNode.style.cssText = 'list-decoration:none;';
                             var textNode = document.createElement("a");
                             textNode.setAttribute("href", blobUri+"/"+blobContainer+"/"+blob.name);
-                            textNode.text = blob.name;
+                            textNode.text = blob.lastModified + " " + blob.name;
                             resultNode.appendChild(textNode);
                             listNode.appendChild(resultNode);
                         }
